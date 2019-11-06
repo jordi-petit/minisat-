@@ -1,0 +1,2 @@
+# minisat-
+Copy of minisat+
