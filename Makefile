@@ -13,10 +13,10 @@ R64COBJS  = $(addsuffix x,  $(COBJS))
 
 EXEC      = minisat+
 
-CXX       = g++
+CXX       = g++-9 -L /usr/local/lib -I /usr/local/include -D ushort="unsigned short"
 #CXX      = icpc
-CFLAGS    = -Wall -ffloat-store 
-CFLAGS   += -IADTs -include Global.h -include Main.h -D_FILE_OFFSET_BITS=64 
+CFLAGS    = -Wall -ffloat-store
+CFLAGS   += -IADTs -include Global.h -include Main.h -D_FILE_OFFSET_BITS=64
 COPTIMIZE = -O3 #-fomit-frame-pointer # -falign-loops=4 -falign-functions=16 -foptimize-sibling-calls -finline-functions -fcse-follow-jumps -fcse-skip-blocks -frerun-cse-after-loop -frerun-loop-opt -fgcse
 
 
@@ -44,53 +44,53 @@ rs:	build $(EXEC)_bignum_static
 rx:	build $(EXEC)_64-bit_static
 
 build:
-	@echo Building $(EXEC) "("$(WAY)")"
+	echo Building $(EXEC) "("$(WAY)")"
 
 clean:
-	@rm -f $(EXEC) $(EXEC)_profile $(EXEC)_debug $(EXEC)_release $(EXEC)_static \
+	rm -f $(EXEC) $(EXEC)_profile $(EXEC)_debug $(EXEC)_release $(EXEC)_static \
 	  $(COBJS) $(PCOBJS) $(DCOBJS) $(RCOBJS) $(R64COBJS) depend.mak
 
 ## Build rule
 %.o %.op %.od %.or %.ox: %.C
-	@echo Compiling: $<
-	@$(CXX) $(CFLAGS) -c -o $@ $<
+	echo Compiling: $<
+	$(CXX) $(CFLAGS) -c -o $@ $<
 
 ## Linking rules (standard/profile/debug/release)
 $(EXEC): $(COBJS)
-	@echo Linking $(EXEC)
-	@$(CXX) $(COBJS) -lz -lgmp -ggdb -Wall -o $@ 
+	echo Linking $(EXEC)
+	$(CXX) $(COBJS) -lz -lgmp -ggdb -Wall -o $@
 
 $(EXEC)_profile: $(PCOBJS)
-	@echo Linking $@
-	@$(CXX) $(PCOBJS) -lz -lgmp -ggdb -Wall -pg -o $@
+	echo Linking $@
+	$(CXX) $(PCOBJS) -lz -lgmp -ggdb -Wall -pg -o $@
 
 $(EXEC)_debug:	$(DCOBJS)
-	@echo Linking $@
-	@$(CXX) $(DCOBJS) -lz -lgmp -ggdb -Wall -o $@
+	echo Linking $@
+	$(CXX) $(DCOBJS) -lz -lgmp -ggdb -Wall -o $@
 
 $(EXEC)_release: $(RCOBJS)
-	@echo Linking $@
-	@$(CXX) $(RCOBJS) -lz -lgmp -Wall -o $@
+	echo Linking $@
+	$(CXX) $(RCOBJS) -lz -lgmp -Wall -o $@
 
 $(EXEC)_bignum_static: $(RCOBJS)
-	@echo Linking $@
-	@$(CXX) --static $(RCOBJS) -lz -lgmp -Wall -o $@
+	echo Linking $@
+	$(CXX) $(RCOBJS) -lz -lgmp -Wall -o $@
 
 $(EXEC)_64-bit_static: $(R64COBJS)
-	@echo Linking $@
-	@$(CXX) --static $(R64COBJS) -lz -Wall -o $@
+	echo Linking $@
+	$(CXX) $(R64COBJS) -lz -Wall -o $@
 
 
 ## Make dependencies
 depend:	depend.mak
 depend.mak:	$(CSRCS) $(CHDRS)
-	@echo Making dependencies...
-	@$(CXX) -MM $(CSRCS) $(CFLAGS) > depend.mak
-	@cp depend.mak /tmp/depend.mak.tmp
-	@sed "s/o:/op:/" /tmp/depend.mak.tmp >> depend.mak
-	@sed "s/o:/od:/" /tmp/depend.mak.tmp >> depend.mak
-	@sed "s/o:/or:/" /tmp/depend.mak.tmp >> depend.mak
-	@sed "s/o:/ox:/" /tmp/depend.mak.tmp >> depend.mak
-	@rm /tmp/depend.mak.tmp
+	echo Making dependencies...
+	$(CXX) -MM $(CSRCS) $(CFLAGS) > depend.mak
+	cp depend.mak /tmp/depend.mak.tmp
+	sed "s/o:/op:/" /tmp/depend.mak.tmp >> depend.mak
+	sed "s/o:/od:/" /tmp/depend.mak.tmp >> depend.mak
+	sed "s/o:/or:/" /tmp/depend.mak.tmp >> depend.mak
+	sed "s/o:/ox:/" /tmp/depend.mak.tmp >> depend.mak
+	rm /tmp/depend.mak.tmp
 
 include depend.mak
