@@ -13,7 +13,7 @@ R64COBJS  = $(addsuffix x,  $(COBJS))
 
 EXEC      = minisat+
 
-CXX       = g++-9 -L /usr/local/lib -I /usr/local/include -D ushort="unsigned short"
+CXX       = /usr/local/bin/g++-9 -L /usr/local/lib -I /usr/local/include -D ushort="unsigned short"
 #CXX      = icpc
 CFLAGS    = -Wall -ffloat-store
 CFLAGS   += -IADTs -include Global.h -include Main.h -D_FILE_OFFSET_BITS=64
